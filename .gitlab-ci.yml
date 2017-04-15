@@ -1,7 +1,4 @@
-variables:
-  REPO_NAME: check_hcache
-  
-  before_script:
+before_script:
   # Install ssh-agent if not already installed, it is required by Docker.
   # (change apt-get to yum if you use a CentOS-based image)
   - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -14,13 +11,19 @@ variables:
   - echo $CI_PROJECT_DIR
 
 stages:
+  - build
   - deploy
+
+pre:
+   stage: build
+   script:
+    - ls
 
 deploy-project:
   stage: deploy
   script:
     - ls -la
+    - scp check_hcache.py m6.c8.net.ua:/scripts/check_hcache.py
     # Run deploy script
-
   only:
     - master
