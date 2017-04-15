@@ -5,21 +5,21 @@ import sys
 
 from time import gmtime, strftime
 
-goroutine_url = 'http://m6.c8.net.ua:13403/debug/pprof/goroutine?debug=1'
-resp_url = 'http://m6.c8.net.ua:89/get?uid=23412'
+goroutine_url = 'http://localhost:13403/debug/pprof/goroutine?debug=1'
+resp_url = 'http://localhost:89/get?uid=23412'
 goroutine_max = 100
 
 
 def log(string):
     dt = strftime("[%d-%m-%Y %H:%M:%S] ", gmtime())
-    with open("test.txt", "a") as myfile:
+    with open("/var/log/gohcache.log", "a") as myfile:
         myfile.write(dt + string + "\n\r")
     pass
 
 
 def restart_hcache(reason):
     log(reason + " restarting hcache...")
-    proc = subprocess.Popen(["echo ok"], stdout=subprocess.PIPE, shell=True)
+    proc = subprocess.Popen(["/sbin/restart hcache"], stdout=subprocess.PIPE, shell=True)
     (out, err) = proc.communicate()
     print(err)
     log(str(out))
