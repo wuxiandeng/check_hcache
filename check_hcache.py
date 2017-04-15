@@ -3,7 +3,7 @@ import requests
 import subprocess
 import sys
 
-from time import gmtime, strftime
+from time import localtime, strftime
 
 goroutine_url = 'http://localhost:13403/debug/pprof/goroutine?debug=1'
 resp_url = 'http://localhost:89/get?uid=23412'
@@ -11,7 +11,7 @@ goroutine_max = 100
 
 
 def log(string):
-    dt = strftime("[%d-%m-%Y %H:%M:%S] ", gmtime())
+    dt = strftime("[%d-%m-%Y %H:%M:%S] ", localtime())
     with open("/var/log/gohcache.log", "a") as myfile:
         myfile.write(dt + string + "\n\r")
     pass
@@ -23,6 +23,7 @@ def restart_hcache(reason):
     (out, err) = proc.communicate()
     print(err)
     log(str(out))
+    log('=================== Finish ===================')
     sys.exit(1)
     pass
 
@@ -91,7 +92,7 @@ def check_goroutine():
     return goroutine_cnt
 
 
-log('Starting')
+log('=================== Starting ===================')
 log('Check response & dmp data')
 
 dmp_data = check_response()
@@ -111,4 +112,4 @@ if int(grt_cnt) > goroutine_max:
 else:
     log('ok')
 
-log('=================== finish ===================')
+log('=================== Finish ===================')
