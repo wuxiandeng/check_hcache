@@ -5,6 +5,11 @@ import sys
 
 from time import localtime, strftime
 
+#dev
+#goroutine_url = 'http://m8.c8.net.ua:13403/debug/pprof/goroutine?debug=1'
+#resp_url = 'http://m8.c8.net.ua:89/get?uid=23412'
+
+#prod
 goroutine_url = 'http://localhost:13403/debug/pprof/goroutine?debug=1'
 resp_url = 'http://localhost:89/get?uid=23412'
 goroutine_max = 100
@@ -13,7 +18,7 @@ goroutine_max = 100
 def log(string):
     dt = strftime("[%d-%m-%Y %H:%M:%S] ", localtime())
     with open("/var/log/gohcache.log", "a") as myfile:
-        myfile.write(dt + string + "\n\r")
+        myfile.write(dt + string + "\r\n")
     pass
 
 
@@ -29,6 +34,7 @@ def restart_hcache(reason):
 
 
 def check_response():
+    print("Check response...")
     try:
         response = requests.get(resp_url, timeout=(5, 5))
         response.raise_for_status()
@@ -46,18 +52,18 @@ def check_response():
         print('Oops. HTTP Error occured')
         print('Response is: {content}'.format(content=err.response.content))
 
-    print(response)
-    print(response.status_code)
-    print(response.headers['content-type'])
+    print("Response status code: " + str(response.status_code))
+
     text = response.text
-    print(text)
+    print("Response text: " + text)
     dmp = re.search('dmp', text)
-    print(dmp)
+    print("Match dmp: " + str(dmp))
 
     return dmp
 
 
 def check_goroutine():
+    print("Check goroutine...")
     try:
         response = requests.get(goroutine_url, timeout=(5, 5))
         response.raise_for_status()
@@ -75,10 +81,7 @@ def check_goroutine():
         print('Oops. HTTP Error occured')
         print('Response is: {content}'.format(content=err.response.content))
 
-    print(response)
-    print(response.status_code)
-
-    print(response.headers['content-type'])
+    print("Response status code: " + str(response.status_code))
     text = response.text
 
     lines = text.split("\n")
@@ -113,3 +116,5 @@ else:
     log('ok')
 
 log('=================== Finish ===================')
+
+
