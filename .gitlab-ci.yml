@@ -23,7 +23,13 @@ deploy-project:
   stage: deploy
   script:
     - ls -la
-    - scp check_hcache.py m6.c8.net.ua:/scripts/check_hcache.py
+    - scp check_hcache.py m6.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py m8.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py m9.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py m10.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py p1.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py node1.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    
     # Run deploy script
   only:
     - master
