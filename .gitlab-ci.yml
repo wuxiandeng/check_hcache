@@ -1,0 +1,35 @@
+before_script:
+  # Install ssh-agent if not already installed, it is required by Docker.
+  # (change apt-get to yum if you use a CentOS-based image)
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  # Run ssh-agent (inside the build environment)
+  - eval $(ssh-agent -s)
+  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - go version
+  - echo $CI_BUILD_REF
+  - echo $CI_PROJECT_DIR
+
+stages:
+  - build
+  - deploy
+
+pre:
+   stage: build
+   script:
+    - ls
+
+deploy-project:
+  stage: deploy
+  script:
+    - ls -la
+    - scp check_hcache.py m6.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py m8.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py m9.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py m10.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py p1.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py node1.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    
+    # Run deploy script
+  only:
+    - master
