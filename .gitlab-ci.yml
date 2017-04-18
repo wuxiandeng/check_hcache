@@ -28,6 +28,7 @@ deploy-project:
     - scp check_hcache.py m9.c8.net.ua:/scripts/check_hcache/check_hcache.py
     - scp check_hcache.py m10.c8.net.ua:/scripts/check_hcache/check_hcache.py
     - scp check_hcache.py p1.c8.net.ua:/scripts/check_hcache/check_hcache.py
+    - scp check_hcache.py p2.c8.net.ua:/scripts/check_hcache/check_hcache.py
     - scp check_hcache.py node1.c8.net.ua:/scripts/check_hcache/check_hcache.py
     
     # Run deploy script
