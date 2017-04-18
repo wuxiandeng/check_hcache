@@ -1,6 +1,7 @@
 import re
 import requests
 import subprocess
+import commands
 import sys
 
 from time import localtime, strftime
@@ -25,24 +26,24 @@ def log(string):
 def restart_hcache(reason):
     #check status
     log('Check status & restart hcache')
-    status = subprocess.check_output("/usr/sbin/service", "hcache", "status", shell=True)
-    if ("running" in status):
-        log(reason + " restarting hcache...")
-        proc = subprocess.Popen(["/sbin/restart", "hcache"], stdout=subprocess.PIPE, shell=True)
+    out = commands.getoutput('/bin/ps -A')
+    if ('hcache' in out):
+        log(reason + ", restarting hcache...")
+        proc = subprocess.Popen(['/sbin/restart hcache'], stdout=subprocess.PIPE, shell=True)
         (out, err) = proc.communicate()
         print(err)
         log(str(out))
     else:
         log(reason + ", not running, starting hcache...")
-        proc = subprocess.Popen(["/sbin/start", "hcache"], stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(["/sbin/start hcache"], stdout=subprocess.PIPE, shell=True)
         (out, err) = proc.communicate()
         print(err)
         log(str(out))
 
     # check status again
-    status = subprocess.check_output("/usr/sbin/service", "hcache", "status", shell=True)
-    if ("running" in status):
-        log('Running status: ' + status)
+    out = commands.getoutput('/bin/ps -A')
+    if ('hcache' in out):
+        log('Running')
     else:
         log("Can't start service, panic!")
         # send mail here
@@ -120,7 +121,7 @@ log('Check response & dmp data')
 dmp_data = check_response()
 
 if dmp_data:
-    log('found dmp data')
+    log('Found dmp data')
 else:
     restart_hcache('dmp data not found')
 
