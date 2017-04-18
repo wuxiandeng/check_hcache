@@ -24,6 +24,7 @@ def log(string):
 
 def restart_hcache(reason):
     #check status
+    log('Check status & restart hcache')
     status = subprocess.check_output("/usr/sbin/service hcache status", shell=True)
     if ("hcache start/running" in status):
         log(reason + " restarting hcache...")
@@ -108,7 +109,7 @@ def check_goroutine():
     goroutine = re.search('(\d+).*(goroutine)', text)
     goroutine_cnt = goroutine.group(1)
 
-    print(goroutine_cnt)
+    print('-' + goroutine_cnt + '-')
 
     return goroutine_cnt
 
