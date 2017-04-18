@@ -25,22 +25,22 @@ def log(string):
 def restart_hcache(reason):
     #check status
     log('Check status & restart hcache')
-    status = subprocess.check_output("/usr/sbin/service hcache status", shell=True)
+    status = subprocess.check_output("/usr/sbin/service", "hcache", "status", shell=True)
     if ("running" in status):
         log(reason + " restarting hcache...")
-        proc = subprocess.Popen(["/sbin/restart hcache"], stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(["/sbin/restart", "hcache"], stdout=subprocess.PIPE, shell=True)
         (out, err) = proc.communicate()
         print(err)
         log(str(out))
     else:
         log(reason + ", not running, starting hcache...")
-        proc = subprocess.Popen(["/sbin/start hcache"], stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(["/sbin/start", "hcache"], stdout=subprocess.PIPE, shell=True)
         (out, err) = proc.communicate()
         print(err)
         log(str(out))
 
     # check status again
-    status = subprocess.check_output("/usr/sbin/service hcache status", shell=True)
+    status = subprocess.check_output("/usr/sbin/service", "hcache", "status", shell=True)
     if ("running" in status):
         log('Running status: ' + status)
     else:
