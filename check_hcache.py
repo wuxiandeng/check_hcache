@@ -24,7 +24,7 @@ def log(string):
 
 def restart_hcache(reason):
     log(reason + " restarting hcache...")
-    proc = subprocess.Popen(["/sbin/restart hcache"], stdout=subprocess.PIPE, shell=True)
+    proc = subprocess.Popen(["/usr/sbin/service hcache restart"], stdout=subprocess.PIPE, shell=True)
     (out, err) = proc.communicate()
     print(err)
     log(str(out))
