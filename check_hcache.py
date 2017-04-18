@@ -23,13 +23,32 @@ def log(string):
 
 
 def restart_hcache(reason):
-    log(reason + " restarting hcache...")
-    proc = subprocess.Popen(["/sbin/stop hcache && /sbin/start hcache"], stdout=subprocess.PIPE, shell=True)
-    (out, err) = proc.communicate()
-    print(err)
-    log(str(out))
+    #check status
+    status = subprocess.check_output("/usr/sbin/service hcache status", shell=True)
+    if ("hcache start/running" in status):
+        log(reason + " restarting hcache...")
+        proc = subprocess.Popen(["/sbin/restart hcache"], stdout=subprocess.PIPE, shell=True)
+        (out, err) = proc.communicate()
+        print(err)
+        log(str(out))
+    else:
+        log(reason + ", not running, starting hcache...")
+        proc = subprocess.Popen(["/sbin/start hcache"], stdout=subprocess.PIPE, shell=True)
+        (out, err) = proc.communicate()
+        print(err)
+        log(str(out))
+
+    # check status again
+    status = subprocess.check_output("/usr/sbin/service hcache status", shell=True)
+    if ("hcache start/running" in status):
+        log('Running status: ' + status)
+    else:
+        log("Can't start service, panic!")
+        # send mail here
+        
     log('=================== Finish ===================')
     sys.exit(1)
+    
     pass
 
 
