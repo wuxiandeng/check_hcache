@@ -6,11 +6,11 @@ import sys
 from time import localtime, strftime
 
 #dev
-#goroutine_url = 'http://m8.c8.net.ua:13403/debug/pprof/goroutine?debug=1'
+#goroutine_url = 'http://m8.c8.net.ua:13403/debug/pprof/'
 #resp_url = 'http://m8.c8.net.ua:89/get?uid=23412'
 
 #prod
-goroutine_url = 'http://localhost:13403/debug/pprof/goroutine?debug=1'
+goroutine_url = 'http://localhost:13403/debug/pprof/'
 resp_url = 'http://localhost:89/get?uid=23412'
 goroutine_max = 100
 
@@ -23,11 +23,29 @@ def log(string):
 
 
 def restart_hcache(reason):
-    log(reason + " restarting hcache...")
-    proc = subprocess.Popen(["/sbin/stop hcache && /sbin/start hcache"], stdout=subprocess.PIPE, shell=True)
-    (out, err) = proc.communicate()
-    print(err)
-    log(str(out))
+    #check status
+    status = subprocess.check_output("/usr/sbin/service hcache status", shell=True)
+    if ("hcache start/running" in status):
+        log(reason + " restarting hcache...")
+        proc = subprocess.Popen(["/sbin/restart hcache"], stdout=subprocess.PIPE, shell=True)
+        (out, err) = proc.communicate()
+        print(err)
+        log(str(out))
+    else:
+        log(reason + ", not running, starting hcache...")
+        proc = subprocess.Popen(["/sbin/start hcache"], stdout=subprocess.PIPE, shell=True)
+        (out, err) = proc.communicate()
+        print(err)
+        log(str(out))
+
+    # check status again
+    status = subprocess.check_output("/usr/sbin/service hcache status", shell=True)
+    if ("hcache start/running" in status):
+        log('Running status: ' + status)
+    else:
+        log("Can't start service, panic!")
+        # send mail here
+
     log('=================== Finish ===================')
     sys.exit(1)
     pass
@@ -83,12 +101,12 @@ def check_goroutine():
 
     print("Response status code: " + str(response.status_code))
     text = response.text
-
-    lines = text.split("\n")
-    line = lines[0]
-    print(lines[0])
-    goroutine = re.search('\d+', line)
-    goroutine_cnt = goroutine.group(0)
+#   print(text)
+#   lines = text.split("\n")
+#   line = lines[0]
+#   print(lines[0])
+    goroutine = re.search('(\d+).*(goroutine)', text)
+    goroutine_cnt = goroutine.group(1)
 
     print(goroutine_cnt)
 
